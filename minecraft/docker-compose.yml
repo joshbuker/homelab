@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  mc_server:
+    image: ${IMAGE:-itzg/minecraft-server}
+    ports:
+      - ${GAME_PORT:-25565}:25565
+    environment:
+      # Agree to the EULA to allow the server to run
+      EULA: "TRUE"
+      # Set the server version and type
+      TYPE: FABRIC
+      VERSION: 1.19.2
+      # Set performance limits - Modpack dev recommends an extra 1GB memory for each player, with a minimum of 5GB / 5 players.
+      MEMORY: "${MEMORY_LIMIT:-20G}"
+      MAX_PLAYERS: ${PLAYER_COUNT:-20}
+      VIEW_DISTANCE: ${VIEW_DISTANCE:-10}
+      # Configure the gameplay settings such as difficulty
+      SEED: "${GAME_SEED:-MedievalMakercraft}"
+      # What the server broadcasts as its name in the multiplayer menu
+      # Server name gets overwritten by the players when connecting remotely
+      SERVER_NAME: "Medieval Minecraft (Fabric Modded Server)"
+      MOTD: "Explore and create in a medieval setting"
+    volumes:
+      - "mc_data:/data"
+    # If having issues on first run generating the world, disable the health check temporarily.
+    #healthcheck:
+    #  disable: true
+    deploy:
+      # Minecraft does not support multiple servers running the same world simultaneously,
+      # DO NOT INCREASE REPLICAS BEYOND 1!
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.deployment.target.minecraft == true
+    # Are tty and stdin_open needed? Copied from netyeti example, unsure if necessary
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+
+volumes:
+  mc_data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${NAS_ADDRESS:-192.168.7.169},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${NAS_DEVICE:-/mnt/smol/docker-swarm/mizucraft}"
