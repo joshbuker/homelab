@@ -33,3 +33,10 @@ This token is only needed on the first run, or whenever the configuration data i
 The IP address that your Plex server will use as its canonical IP.
 
 For example, if you connect to Plex through another node within your docker swarm,
+
+### PLEX_NAS_ADDRESS and PLEX_NAS_DEVICE
+
+These control access to the NFS share used to host your Plex data.
+
+`PLEX_NAS_ADDRESS` is the IP of your NFS host.
+`PLEX_NAS_DEVICE` is the mount point of the Plex data/library share.
