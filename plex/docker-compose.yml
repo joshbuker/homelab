@@ -5,7 +5,7 @@ services:
     image: plexinc/pms-docker
     restart: unless-stopped
     ports:
-      - 32400:32400/tcp
+      - ${PLEX_PORT:?Please configure PLEX_PORT to connect to Plex}:32400/tcp
       - 3005:3005/tcp
       - 8324:8324/tcp
       - 32469:32469/tcp
@@ -16,10 +16,13 @@ services:
       - 32414:32414/udp
     environment:
       TZ: 'America/Los_Angeles'
-      ADVERTISE_IP: 'http://${ADVERTISE_IP:-192.168.7.200}:32400/'
+      ADVERTISE_IP: 'http://${PLEX_IP:?Please configure PLEX_IP to connect to Plex}:${PLEX_PORT:?Please configure PLEX_PORT to connect to Plex}/'
+      # Claiming will need to be done on first run, or anytime you reset the
+      # config (e.g. move to a new node).
       # https://www.plex.tv/claim/
-      PLEX_CLAIM: '${PLEX_CLAIM_TOKEN}'
-      HOSTNAME: '${HOSTNAME:-PonosPlexServer}'
+      PLEX_CLAIM: '${PLEX_CLAIM_TOKEN:?Please configure PLEX_CLAIM_TOKEN via env variables}'
+      # This doesn't seem to actually work
+      # HOSTNAME: '${HOSTNAME:-PonosPlexServer}'
     volumes:
       - plex_config:/config
       - plex_transcode:/transcode
@@ -27,13 +30,14 @@ services:
     deploy:
       placement:
         constraints:
+          # You'll need to label at least one node for plex deployment
           - node.labels.deployment.target.plex == true
 
 volumes:
   plex_data:
     driver_opts:
       type: "nfs"
-      o: "addr=${NAS_ADDRESS:-192.168.7.169},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${NAS_DEVICE_PLEX_DATA:-/mnt/smol/docker-swarm/plex/data}"
+      o: "addr=${PLEX_NAS_ADDRESS:?Please configure PLEX_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${PLEX_NAS_DEVICE:?Please configure PLEX_NAS_DEVICE}"
   plex_config: {}
   plex_transcode: {}
