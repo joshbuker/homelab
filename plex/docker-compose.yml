@@ -17,6 +17,7 @@ services:
     environment:
       TZ: 'America/Los_Angeles'
       ADVERTISE_IP: 'http://${ADVERTISE_IP:-192.168.7.200}:32400/'
+      # https://www.plex.tv/claim/
       PLEX_CLAIM: '${PLEX_CLAIM_TOKEN}'
       HOSTNAME: '${HOSTNAME:-PonosPlexServer}'
     volumes:
