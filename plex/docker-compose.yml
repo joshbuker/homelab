@@ -34,9 +34,5 @@ volumes:
       type: "nfs"
       o: "addr=${NAS_ADDRESS:-192.168.7.169},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
       device: ":${NAS_DEVICE_PLEX_DATA:-/mnt/smol/docker-swarm/plex/data}"
-  plex_config:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${NAS_ADDRESS:-192.168.7.169},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${NAS_DEVICE_PLEX_CONFIG:-/mnt/smol/docker-swarm/plex/config}"
+  plex_config: {}
   plex_transcode: {}
