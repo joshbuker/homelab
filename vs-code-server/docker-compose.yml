@@ -22,7 +22,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  vs_data:
+  vs_config:
     driver_opts:
       type: "nfs"
       o: "addr=${VS_NAS_ADDRESS:?Please set VS_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
