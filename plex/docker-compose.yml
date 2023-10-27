@@ -23,7 +23,7 @@ services:
     volumes:
       - plex_config:/config
       - plex_transcode:/transcode
-      - plex_data:/data
+      - plex_media:/media
     deploy:
       placement:
         constraints:
@@ -31,7 +31,7 @@ services:
           - node.labels.deployment.target.plex == true
 
 volumes:
-  plex_data:
+  plex_media:
     driver_opts:
       type: "nfs"
       o: "addr=${PLEX_NAS_ADDRESS:?Please configure PLEX_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
