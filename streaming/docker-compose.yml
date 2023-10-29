@@ -1,20 +1,8 @@
 version: "3.8"
 
-networks:
-  frontend:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.22.0.1/24
-    driver_opts:
-      com.docker.network.bridge.name: br_starr
-
 services:
   jellyfin:
     image: ghcr.io/linuxserver/jellyfin:latest
-    networks:
-      frontend:
-        ipv4_address: 172.22.0.4
     environment:
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
@@ -164,9 +152,6 @@ services:
       SERVER_HOSTNAMES: ${OPENVPN_HOSTNAMES:-ch-us-01a.protonvpn.net,ch-us-01b.protonvpn.net,ch-us-01c.protonvpn.net,ch-us-01d.protonvpn.net,ch-us-01e.protonvpn.net,ch-us-01f.protonvpn.net,ch-us-01g.protonvpn.net,ch-us-01h.protonvpn.net,ch-us-01i.protonvpn.net,ch-us-01j.protonvpn.net,ch-us-01k.protonvpn.net,ch-us-01n.protonvpn.net,ch-us-01p.protonvpn.net,ch-us-01v.protonvpn.net,ch-us-01w.protonvpn.net,ch-us-01x.protonvpn.net,ch-us-01y.protonvpn.net,ch-us-01z.protonvpn.net,ch-us-02a.protonvpn.net,ch-us-02b.protonvpn.net,ch-us-02c.protonvpn.net,ch-us-02d.protonvpn.net,ch-us-02d.protonvpn.net,ch-us-02e.protonvpn.net,ch-us-02f.protonvpn.net,ch-us-02g.protonvpn.net,ch-us-02h.protonvpn.net,ch-us-02i.protonvpn.net,ch-us-02j.protonvpn.net,ch-us-02k.protonvpn.net}
     volumes:
       - /tmp:/tmp
-    networks:
-      frontend:
-        ipv4_address: 172.22.0.2
     ports:
       - ${GLUETON_API_PORT:-8087}:8087 # Gluetun HTTP API
       - ${SABNZBD_PORT:-8086}:8086 # SABnzbd HTTP Interface
