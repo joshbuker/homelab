@@ -154,7 +154,7 @@ services:
       - /tmp:/tmp
     ports:
       - ${GLUETON_API_PORT:-8087}:8087 # Gluetun HTTP API
-      - ${SABNZBD_PORT:-8086}:8086 # SABnzbd HTTP Interface
+      - ${SABNZBD_PORT:-8086}:8080 # SABnzbd HTTP Interface
       - ${QBITTORRENT_UI_PORT:-8085}:8085/tcp # qBittorrent HTTP Interface
       - ${RADARR_PORT:-7878}:7878 # Radarr HTTP Interface and API
       - ${SONARR_PORT:-8989}:8989 # Sonarr HTTP Interface and API
