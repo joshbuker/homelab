@@ -1,0 +1,263 @@
+version: "3.8"
+
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.1/24
+    driver_opts:
+      com.docker.network.bridge.name: br_starr
+
+services:
+  jellyfin:
+    image: ghcr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    networks:
+      frontend:
+        ipv4_address: 172.18.0.4
+    environment:
+      TZ: '${TZ:-America/Los_Angeles}'
+    volumes:
+      - jellyfin_config:/config
+      - jellyfin_transcode:/media/transcode-cache
+      - jellyfin_data:/media
+      # - ~/docker/config/jellyfin/custom-scripts:/custom-cont-init.d:ro
+    ports:
+      - ${JELLYFIN_HTTP_PORT:-8096}:8096/tcp
+      - ${JELLYFIN_HTTPS_PORT:-8920}:8920/tcp
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+    restart: unless-stopped
+  qbittorrent:
+    image: ghcr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: service:gluetun
+    environment:
+      TZ: '${TZ:-America/Los_Angeles}'
+      UMASK: 022
+      WEBUI_PORT: ${QBITTORRENT_UI_PORT:-8085}
+    volumes:
+      - qbittorrent_config:/config
+      - media_downloads:/downloads
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+    restart: unless-stopped
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    network_mode: service:gluetun
+    environment:
+      TZ: '${TZ:-America/Los_Angeles}'
+    volumes:
+      - sabnzbd_config:/config
+      - media_downloads:/downloads
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+    restart: unless-stopped
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      LOG_LEVEL: info
+      TZ: '${TZ:-America/Los_Angeles}'
+    network_mode: service:gluetun
+    volumes:
+      - jellyseerr_config:/app/config
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+    restart: unless-stopped
+  flaresolverr:
+    # DockerHub mirror flaresolverr/flaresolverr:latest
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      LOG_HTML: ${LOG_HTML:-false}
+      CAPTCHA_SOLVER: ${CAPTCHA_SOLVER:-none}
+      TZ: '${TZ:-America/Los_Angeles}'
+    network_mode: service:gluetun
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+    restart: unless-stopped
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:develop
+    container_name: sonarr
+    network_mode: service:gluetun
+    environment:
+      TZ: '${TZ:-America/Los_Angeles}'
+    volumes:
+      - sonarr_config:/config
+      - sonarr_media:/tv
+      - media_downloads:/downloads
+      # - /media/ramcache:/config/temp
+      - sonarr_custom_services:/custom-services.d
+      - sonarr_custom_cont_init:/custom-cont-init.d
+      # ORIGINAL VOLUMES
+      # - ~/docker/config/sonarr:/config
+      # - /media/library/jellyfin/tv:/tv
+      # - /media/downloads:/downloads
+      # - /media/ramcache:/config/temp
+      # - ~/docker/config/sonarr/extended/custom-services:/custom-services.d
+      # - ~/docker/config/sonarr/extended/custom-cont-init:/custom-cont-init.d
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+    restart: unless-stopped
+  radarr:
+    image: ghcr.io/linuxserver/radarr:latest
+    container_name: radarr
+    network_mode: service:gluetun
+    environment:
+      TZ: '${TZ:-America/Los_Angeles}'
+    volumes:
+      - radarr_config:/config
+      - radarr_media:/movies
+      - media_downloads:/downloads
+      # - /media/ramcache:/config/temp
+      - radarr_custom_services:/custom-services.d
+      - radarr_custom_cont_init:/custom-cont-init.d
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+    restart: unless-stopped
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      # PUID: 1000
+      # PGID: 1000
+      TZ: '${TZ:-America/Los_Angeles}'
+    volumes:
+      - prowlarr_config:/config
+    network_mode: service:gluetun
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+    restart: unless-stopped
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      VPN_SERVICE_PROVIDER: ${OPENVPN_PROVIDER:-protonvpn}
+      OPENVPN_USER: ${OPENVPN_USER:?Please set OPENVPN_USER}
+      OPENVPN_PASSWORD: ${OPENVPN_PASSWORD:?Please set OPENVPN_PASSWORD}
+      HTTP_CONTROL_SERVER_ADDRESS: "${GLUETON_API_PORT:-8087}:8087"
+      BLOCK_SURVEILLANCE: on
+      FIREWALL_OUTBOUND_SUBNETS: ${FIREWALL_OUTBOUND_SUBNETS:?Please set FIREWALL_OUTBOUND_SUBNETS}
+      TZ: ${TZ:-America/Los_Angeles}
+      UPDATER_PERIOD: ${OPENVPN_UPDATER_PERIOD:-720h} # Update every 30 days
+      SERVER_HOSTNAMES: ${OPENVPN_HOSTNAMES:-ch-us-01a.protonvpn.net,ch-us-01b.protonvpn.net,ch-us-01c.protonvpn.net,ch-us-01d.protonvpn.net,ch-us-01e.protonvpn.net,ch-us-01f.protonvpn.net,ch-us-01g.protonvpn.net,ch-us-01h.protonvpn.net,ch-us-01i.protonvpn.net,ch-us-01j.protonvpn.net,ch-us-01k.protonvpn.net,ch-us-01n.protonvpn.net,ch-us-01p.protonvpn.net,ch-us-01v.protonvpn.net,ch-us-01w.protonvpn.net,ch-us-01x.protonvpn.net,ch-us-01y.protonvpn.net,ch-us-01z.protonvpn.net,ch-us-02a.protonvpn.net,ch-us-02b.protonvpn.net,ch-us-02c.protonvpn.net,ch-us-02d.protonvpn.net,ch-us-02d.protonvpn.net,ch-us-02e.protonvpn.net,ch-us-02f.protonvpn.net,ch-us-02g.protonvpn.net,ch-us-02h.protonvpn.net,ch-us-02i.protonvpn.net,ch-us-02j.protonvpn.net,ch-us-02k.protonvpn.net}
+    volumes:
+      - /tmp:/tmp
+    networks:
+      frontend:
+        ipv4_address: 172.18.0.2
+    ports:
+      - ${GLUETON_API_PORT:-8087}:8087 # Gluetun HTTP API
+      - ${SABNZBD_PORT:-8086}:8086 # SABnzbd HTTP Interface
+      - ${QBITTORRENT_UI_PORT:-8085}:8085/tcp # qBittorrent HTTP Interface
+      - ${RADARR_PORT:-7878}:7878 # Radarr HTTP Interface and API
+      - ${SONARR_PORT:-8989}:8989 # Sonarr HTTP Interface and API
+      - ${PROWLARR_PORT:-9696}:9696 # Prowlarr HTTP Interface and API
+      - ${FLARESOLVERR_PROXY_PORT:-8191}:8191 # Flaresolverr proxy
+      - ${JELLYSEERR_PORT:-5055}:5055 # Jellyseerr HTTP Interface
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+
+volumes:
+  jellyfin_config:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${JELLYFIN_CONFIG_NAS_ADDRESS:?Please set JELLYFIN_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${JELLYFIN_CONFIG_NAS_DEVICE:?Please set JELLYFIN_CONFIG_NAS_DEVICE}"
+  jellyfin_transcode:
+    driver_opts:
+      type: tmpfs
+      o: "nodev,nosuid,noexec,nodiratime,size=32G,x-gvfs-show"
+      device: /media/transcode-cache
+  jellyfin_data:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${JELLYFIN_DATA_NAS_ADDRESS:?Please set JELLYFIN_DATA_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${JELLYFIN_DATA_NAS_DEVICE:?Please set JELLYFIN_DATA_NAS_DEVICE}"
+  qbittorrent_config:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${QBITTORRENT_CONFIG_NAS_ADDRESS:?Please set QBITTORRENT_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${QBITTORRENT_CONFIG_NAS_DEVICE:?Please set QBITTORRENT_CONFIG_NAS_DEVICE}"
+  sabnzbd_config:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${SABNZDB_CONFIG_NAS_ADDRESS:?Please set SABNZDB_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${SABNZDB_CONFIG_NAS_DEVICE:?Please set SABNZDB_CONFIG_NAS_DEVICE}"
+  media_downloads:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${MEDIA_DOWNLOADS_NAS_ADDRESS:?Please set MEDIA_DOWNLOADS_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${MEDIA_DOWNLOADS_NAS_DEVICE:?Please set MEDIA_DOWNLOADS_NAS_DEVICE}"
+  sonarr_config:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${SONARR_CONFIG_NAS_ADDRESS:?Please set SONARR_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${SONARR_CONFIG_NAS_DEVICE:?Please set SONARR_CONFIG_NAS_DEVICE}"
+  sonarr_media:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${SONARR_MEDIA_NAS_ADDRESS:?Please set SONARR_MEDIA_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${SONARR_MEDIA_NAS_DEVICE:?Please set SONARR_MEDIA_NAS_DEVICE}"
+  sonarr_custom_services:
+  sonarr_custom_cont_init:
+  radarr_config:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${RADARR_CONFIG_NAS_ADDRESS:?Please set RADARR_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${RADARR_CONFIG_NAS_DEVICE:?Please set RADARR_CONFIG_NAS_DEVICE}"
+  radarr_media:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${RADARR_MEDIA_NAS_ADDRESS:?Please set RADARR_MEDIA_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${RADARR_MEDIA_NAS_DEVICE:?Please set RADARR_MEDIA_NAS_DEVICE}"
+  radarr_custom_services:
+  radarr_custom_cont_init:
+  prowlarr_config:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${PROWLARR_CONFIG_NAS_ADDRESS:?Please set PROWLARR_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${PROWLARR_CONFIG_NAS_DEVICE:?Please set PROWLARR_CONFIG_NAS_DEVICE}"
+  jellyseerr_config:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${JELLYSEERR_CONFIG_NAS_ADDRESS:?Please set JELLYSEERR_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${JELLYSEERR_CONFIG_NAS_DEVICE:?Please set JELLYSEERR_CONFIG_NAS_DEVICE}"
+  jellyseerr_custom_services:
+  jellyseerr_custom_cont_init:
