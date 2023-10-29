@@ -13,8 +13,8 @@ services:
     ports:
       - ${JELLYFIN_HTTP_PORT:-8096}:8096/tcp
       - ${JELLYFIN_HTTPS_PORT:-8920}:8920/tcp
-    devices:
-      - /dev/dri/renderD128:/dev/dri/renderD128
+    # devices:
+    #   - /dev/dri/renderD128:/dev/dri/renderD128
     logging:
       driver: "json-file"
       options:
