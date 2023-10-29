@@ -5,7 +5,7 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.18.0.1/24
+        - subnet: 172.22.0.1/24
     driver_opts:
       com.docker.network.bridge.name: br_starr
 
@@ -14,7 +14,7 @@ services:
     image: ghcr.io/linuxserver/jellyfin:latest
     networks:
       frontend:
-        ipv4_address: 172.18.0.4
+        ipv4_address: 172.22.0.4
     environment:
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
@@ -166,7 +166,7 @@ services:
       - /tmp:/tmp
     networks:
       frontend:
-        ipv4_address: 172.18.0.2
+        ipv4_address: 172.22.0.2
     ports:
       - ${GLUETON_API_PORT:-8087}:8087 # Gluetun HTTP API
       - ${SABNZBD_PORT:-8086}:8086 # SABnzbd HTTP Interface
