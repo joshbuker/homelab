@@ -177,7 +177,7 @@ volumes:
   jellyfin_transcode:
     driver_opts:
       type: tmpfs
-      o: "nodev,nosuid,noexec,nodiratime,size=32G,x-gvfs-show"
+      o: "nodev,nosuid,noexec,nodiratime,size=32G"
       device: /media/transcode-cache
   jellyfin_data:
     driver_opts:
