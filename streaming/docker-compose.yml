@@ -105,6 +105,7 @@ services:
     volumes:
       - ./sonarr_config:/config
       - streaming_data:/data
+      - plex_media:/plex
       # - /media/ramcache:/config/temp
       - ./sonarr_config/extended/custom-services:/custom-services.d
       - ./sonarr_config/extended/custom-cont-int:/custom-cont-init.d
@@ -132,6 +133,7 @@ services:
     volumes:
       - ./radarr_config:/config
       - streaming_data:/data
+      - plex_media:/plex
       # - /media/ramcache:/config/temp
       - ./radarr_config/extended/custom-services:/custom-services.d
       - ./radarr_config/extended/custom-cont-int:/custom-cont-init.d
@@ -213,3 +215,8 @@ volumes:
       type: "nfs"
       o: "addr=${STREAMING_DATA_NAS_ADDRESS:?Please set STREAMING_DATA_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
       device: ":${STREAMING_DATA_NAS_DEVICE:?Please set STREAMING_DATA_NAS_DEVICE}/downloads"
+  plex_media:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${PLEX_NAS_ADDRESS:?Please configure PLEX_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${PLEX_NAS_DEVICE:?Please configure PLEX_NAS_DEVICE}"
