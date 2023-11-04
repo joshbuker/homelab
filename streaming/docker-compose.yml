@@ -3,7 +3,10 @@ version: "3.8"
 services:
   jellyfin:
     image: ghcr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
     environment:
+      PUID: 1000
+      PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
       - ./jellyfin_config:/config
@@ -22,8 +25,11 @@ services:
     restart: unless-stopped
   qbittorrent:
     image: ghcr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
     network_mode: service:gluetun
     environment:
+      PUID: 1000
+      PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
       UMASK: 022
       WEBUI_PORT: ${QBITTORRENT_UI_PORT:-8085}
@@ -38,8 +44,11 @@ services:
     restart: unless-stopped
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
     network_mode: service:gluetun
     environment:
+      PUID: 1000
+      PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
       - ./sabnzbd_config:/config
@@ -52,7 +61,10 @@ services:
     restart: unless-stopped
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
     environment:
+      PUID: 1000
+      PGID: 1000
       LOG_LEVEL: info
       TZ: '${TZ:-America/Los_Angeles}'
     network_mode: service:gluetun
@@ -67,7 +79,10 @@ services:
   flaresolverr:
     # DockerHub mirror flaresolverr/flaresolverr:latest
     image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
     environment:
+      PUID: 1000
+      PGID: 1000
       LOG_LEVEL: ${LOG_LEVEL:-info}
       LOG_HTML: ${LOG_HTML:-false}
       CAPTCHA_SOLVER: ${CAPTCHA_SOLVER:-none}
@@ -81,8 +96,11 @@ services:
     restart: unless-stopped
   sonarr:
     image: ghcr.io/linuxserver/sonarr:develop
+    container_name: sonarr
     network_mode: service:gluetun
     environment:
+      PUID: 1000
+      PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
       - ./sonarr_config:/config
@@ -105,8 +123,11 @@ services:
     restart: unless-stopped
   radarr:
     image: ghcr.io/linuxserver/radarr:latest
+    container_name: radarr
     network_mode: service:gluetun
     environment:
+      PUID: 1000
+      PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
       - ./radarr_config:/config
@@ -122,9 +143,10 @@ services:
     restart: unless-stopped
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
     environment:
-      # PUID: 1000
-      # PGID: 1000
+      PUID: 1000
+      PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
       - ./prowlarr_config:/config
@@ -137,9 +159,12 @@ services:
     restart: unless-stopped
   gluetun:
     image: qmcgaw/gluetun:latest
+    container_name: gluetun
     cap_add:
       - NET_ADMIN
     environment:
+      PUID: 1000
+      PGID: 1000
       VPN_SERVICE_PROVIDER: ${OPENVPN_PROVIDER:-protonvpn}
       OPENVPN_USER: ${OPENVPN_USER:?Please set OPENVPN_USER}
       OPENVPN_PASSWORD: ${OPENVPN_PASSWORD:?Please set OPENVPN_PASSWORD}
