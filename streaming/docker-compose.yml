@@ -6,10 +6,9 @@ services:
     environment:
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
-      - jellyfin_config:/config
+      - ./jellyfin_config:/config
       - jellyfin_transcode:/media/transcode-cache
       - jellyfin_data:/media
-      # - ~/docker/config/jellyfin/custom-scripts:/custom-cont-init.d:ro
     ports:
       - ${JELLYFIN_HTTP_PORT:-8096}:8096/tcp
       - ${JELLYFIN_HTTPS_PORT:-8920}:8920/tcp
@@ -29,7 +28,7 @@ services:
       UMASK: 022
       WEBUI_PORT: ${QBITTORRENT_UI_PORT:-8085}
     volumes:
-      - qbittorrent_config:/config
+      - ./qbittorrent_config:/config
       - media_downloads:/downloads
     logging:
       driver: "json-file"
@@ -43,7 +42,7 @@ services:
     environment:
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
-      - sabnzbd_config:/config
+      - ./sabnzbd_config:/config
       - media_downloads:/downloads
     logging:
       driver: "json-file"
@@ -58,7 +57,7 @@ services:
       TZ: '${TZ:-America/Los_Angeles}'
     network_mode: service:gluetun
     volumes:
-      - jellyseerr_config:/app/config
+      - ./jellyseerr_config:/app/config
     logging:
       driver: "json-file"
       options:
@@ -86,11 +85,11 @@ services:
     environment:
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
-      - sonarr_config:/config
+      - ./sonarr_config:/config
       - streaming_data:/data
       # - /media/ramcache:/config/temp
-      - sonarr_custom_services:/custom-services.d
-      - sonarr_custom_cont_init:/custom-cont-init.d
+      - ./sonarr_config/extended/custom-services:/custom-services.d
+      - ./sonarr_config/extended/custom-cont-int:/custom-cont-init.d
       # ORIGINAL VOLUMES
       # - ~/docker/config/sonarr:/config
       # - /media/library/jellyfin/tv:/tv
@@ -110,11 +109,11 @@ services:
     environment:
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
-      - radarr_config:/config
+      - ./radarr_config:/config
       - streaming_data:/data
       # - /media/ramcache:/config/temp
-      - radarr_custom_services:/custom-services.d
-      - radarr_custom_cont_init:/custom-cont-init.d
+      - ./radarr_config/extended/custom-services:/custom-services.d
+      - ./radarr_config/extended/custom-cont-int:/custom-cont-init.d
     logging:
       driver: "json-file"
       options:
@@ -128,7 +127,7 @@ services:
       # PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
-      - prowlarr_config:/config
+      - ./prowlarr_config:/config
     network_mode: service:gluetun
     logging:
       driver: "json-file"
@@ -169,11 +168,6 @@ services:
         max-size: "10m" # file size
 
 volumes:
-  jellyfin_config:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/jellyfin"
   jellyfin_transcode:
     driver_opts:
       type: tmpfs
@@ -184,16 +178,6 @@ volumes:
       type: "nfs"
       o: "addr=${STREAMING_DATA_NAS_ADDRESS:?Please set STREAMING_DATA_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
       device: ":${STREAMING_DATA_NAS_DEVICE:?Please set STREAMING_DATA_NAS_DEVICE}/library"
-  qbittorrent_config:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/qbittorrent"
-  sabnzbd_config:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/sabnzbd"
   streaming_data:
     driver_opts:
       type: "nfs"
@@ -204,43 +188,3 @@ volumes:
       type: "nfs"
       o: "addr=${STREAMING_DATA_NAS_ADDRESS:?Please set STREAMING_DATA_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
       device: ":${STREAMING_DATA_NAS_DEVICE:?Please set STREAMING_DATA_NAS_DEVICE}/downloads"
-  sonarr_config:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/sonarr"
-  sonarr_custom_services:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/sonarr/extended/custom-services"
-  sonarr_custom_cont_init:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/sonarr/extended/custom-cont-init"
-  radarr_config:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/radarr"
-  radarr_custom_services:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/radarr/extended/custom-services"
-  radarr_custom_cont_init:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/radarr/extended/custom-cont-init"
-  prowlarr_config:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/prowlarr"
-  jellyseerr_config:
-    driver_opts:
-      type: "nfs"
-      o: "addr=${STREAMING_CONFIG_NAS_ADDRESS:?Please set STREAMING_CONFIG_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
-      device: ":${STREAMING_CONFIG_NAS_DEVICE:?Please set STREAMING_CONFIG_NAS_DEVICE}/jellyseerr"
