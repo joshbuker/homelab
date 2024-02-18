@@ -5,6 +5,8 @@ services:
     image: ghcr.io/bigbrainenergy-org/web.tdl.app:main
     depends_on:
       - tdl-app-backend
+    ports:
+      - ${TDL_APP_FRONTEND_HTTP_PORT:-9000}:9000/tcp
     container_name: web.tdl.app
     restart: unless-stopped
 
@@ -13,7 +15,7 @@ services:
     depends_on:
       - tdl-app-db
     ports:
-      - "3000:3000"
+      - ${TDL_APP_BACKEND_HTTP_PORT:-3000}:3000/tcp
     restart: unless-stopped
     environment:
       RAILS_ENV: production
