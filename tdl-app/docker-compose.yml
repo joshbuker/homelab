@@ -1,14 +1,15 @@
 version: "3"
 
 services:
-  tdl-app-frontend:
-    image: ghcr.io/bigbrainenergy-org/web.tdl.app:main
-    depends_on:
-      - tdl-app-backend
-    ports:
-      - ${TDL_APP_FRONTEND_HTTP_PORT:-9000}:9000/tcp
-    container_name: web.tdl.app
-    restart: unless-stopped
+  # FIXME: I'm too lazy to figure out the port conflict atm.
+  # tdl-app-frontend:
+  #   image: ghcr.io/bigbrainenergy-org/web.tdl.app:main
+  #   depends_on:
+  #     - tdl-app-backend
+  #   ports:
+  #     - ${TDL_APP_FRONTEND_HTTP_PORT:-9000}:9000/tcp
+  #   container_name: web.tdl.app
+  #   restart: unless-stopped
 
   tdl-app-backend:
     image: ghcr.io/bigbrainenergy-org/api.tdl.app:main
