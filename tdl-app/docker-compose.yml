@@ -20,6 +20,7 @@ services:
     environment:
       RAILS_ENV: production
       SECRET_KEY_BASE: ${TDL_APP_SECRET_KEY_BASE:?Please configure TDL_APP_SECRET_KEY_BASE}
+      API_TDL_APP_DATABASE_PASSWORD: ${TDL_APP_DATABASE_PASSWORD:?Please configure API_TDL_APP_DATABASE_PASSWORD}
 
   tdl-app-db:
     image: postgres:latest
