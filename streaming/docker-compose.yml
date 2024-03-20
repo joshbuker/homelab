@@ -102,6 +102,7 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
+      DOCKER_MODS: 'linuxserver/mods:radarr-striptracks'
     volumes:
       - ./sonarr_config:/config
       - streaming_data:/data
@@ -130,6 +131,7 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
+      DOCKER_MODS: 'linuxserver/mods:radarr-striptracks'
     volumes:
       - ./radarr_config:/config
       - streaming_data:/data
