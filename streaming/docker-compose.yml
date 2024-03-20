@@ -95,7 +95,7 @@ services:
         max-size: "10m" # file size
     restart: unless-stopped
   sonarr:
-    image: ghcr.io/linuxserver/sonarr:develop
+    image: ghcr.io/linuxserver/sonarr:latest
     container_name: sonarr
     network_mode: service:gluetun
     environment:
