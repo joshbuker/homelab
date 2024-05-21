@@ -1,0 +1,22 @@
+services:
+  bot:
+    image: ghcr.io/joshbuker/discord-bot:main
+    depends_on:
+      - llm
+    network_mode: service:llm
+    tty: true
+
+  llm:
+    image: ollama/ollama
+    volumes:
+      - ollama:/root/.ollama
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidiia
+    #           count: 1
+    #           capabilities: [gpu]
+
+volumes:
+  ollama: {}
