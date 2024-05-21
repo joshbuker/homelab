@@ -14,6 +14,8 @@ services:
     image: ollama/ollama
     volumes:
       - ollama:/root/.ollama
+    ports:
+      - "11434:11434"
     # deploy:
     #   resources:
     #     reservations:
