@@ -9,6 +9,7 @@ services:
     tty: true
     environment:
       - RUBY_DISCORD_BOT_TOKEN=${RUBY_DISCORD_BOT_TOKEN:?Please configure RUBY_DISCORD_BOT_TOKEN}
+      - OLLAMA_SERVICE_NAME=${OLLAMA_SERVICE_NAME:?Please configure OLLAMA_SERVICE_NAME}
 
   llm:
     image: ollama/ollama
