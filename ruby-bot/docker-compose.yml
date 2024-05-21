@@ -7,6 +7,8 @@ services:
       - llm
     network_mode: service:llm
     tty: true
+    environment:
+      - RUBY_DISCORD_BOT_TOKEN=${RUBY_DISCORD_BOT_TOKEN:?Please configure RUBY_DISCORD_BOT_TOKEN}
 
   llm:
     image: ollama/ollama
