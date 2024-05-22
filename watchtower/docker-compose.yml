@@ -6,6 +6,8 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+    environment:
+      - WATCHTOWER_CLEANUP=true
     logging:
       driver: "json-file"
       options:
