@@ -8,6 +8,11 @@ services:
     # TODO: Might need to lock this down depending on how unstable latest is
     # image: grafana/loki:3.0.0
     image: grafana/loki:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.deployment.target.loki == true
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
@@ -18,6 +23,11 @@ services:
     # TODO: Might need to lock this down depending on how unstable latest is
     # image: grafana/promtail:3.0.0
     image: grafana/promtail:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.deployment.target.loki == true
     volumes:
       - /var/log:/var/log
     command: -config.file=/etc/promtail/config.yml
@@ -49,6 +59,11 @@ services:
         EOF
         /run.sh
     image: grafana/grafana:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.deployment.target.loki == true
     ports:
       - "3000:3000"
     networks:
