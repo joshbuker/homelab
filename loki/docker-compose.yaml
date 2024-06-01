@@ -35,6 +35,8 @@ services:
       - loki
 
   grafana:
+    volumes:
+      - grafana-storage:/var/lib/grafana
     environment:
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -68,3 +70,6 @@ services:
       - "3000:3000"
     networks:
       - loki
+
+volumes:
+  grafana-storage: {}
