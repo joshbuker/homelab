@@ -6,8 +6,9 @@ networks:
 services:
   loki:
     # TODO: Might need to lock this down depending on how unstable latest is
-    # image: grafana/loki:3.0.0
-    image: grafana/loki:latest
+    image: grafana/loki:2.9.2
+    # image: grafana/loki:latest
+    volumes: loki-data:/loki
     deploy:
       replicas: 1
       placement:
@@ -21,8 +22,8 @@ services:
 
   promtail:
     # TODO: Might need to lock this down depending on how unstable latest is
-    # image: grafana/promtail:3.0.0
-    image: grafana/promtail:latest
+    image: grafana/promtail:2.9.2
+    # image: grafana/promtail:latest
     deploy:
       replicas: 1
       placement:
@@ -73,3 +74,4 @@ services:
 
 volumes:
   grafana-storage: {}
+  loki-data: {}
