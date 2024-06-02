@@ -13,6 +13,11 @@ services:
     volumes:
       - ./prometheus:/etc/prometheus
       - prometheus-data:/prometheus
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.deployment.target.loki == true
 
   loki:
     # TODO: Might need to lock this down depending on how unstable latest is
