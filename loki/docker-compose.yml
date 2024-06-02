@@ -18,6 +18,8 @@ services:
       placement:
         constraints:
           - node.labels.deployment.target.loki == true
+    networks:
+      - loki
 
   loki:
     # TODO: Might need to lock this down depending on how unstable latest is
