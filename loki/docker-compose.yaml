@@ -8,7 +8,8 @@ services:
     # TODO: Might need to lock this down depending on how unstable latest is
     image: grafana/loki:2.9.2
     # image: grafana/loki:latest
-    volumes: loki-data:/loki
+    volumes:
+      - loki-data:/loki
     deploy:
       replicas: 1
       placement:
