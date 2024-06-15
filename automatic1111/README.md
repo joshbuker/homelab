@@ -29,7 +29,7 @@ https://docs.docker.com/desktop/
 
 To give Stable Diffusion access to the GPU, you'll need to install the nvidia container toolkit.
 
-1. Configure the repository
+1. Configure the repository. Arch users, skip to step 2.
 
 ```sh
 curl -fsSL https://nvidia.github.io/libnvidia-container/gpgkey \
@@ -44,6 +44,8 @@ sudo apt-get update
 
 ```sh
 sudo apt-get install -y nvidia-container-toolkit
+# or, for Arch:
+sudo pacman -Syu nvidia-container-toolkit
 ```
 
 3. Configure Docker to use Nvidia driver
