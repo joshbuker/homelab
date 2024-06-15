@@ -1,0 +1,22 @@
+services:
+  automatic1111:
+    image: ghcr.io/joshbuker/automatic1111-docker:main
+    volumes:
+      - ./model:/model:ro
+      - ./output:/app/outputs
+      - venv:/app/venv
+      - repos:/app/repositories
+    tty: true
+    ports:
+      - 7860:7860
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+volumes:
+  venv: {}
+  repos: {}
