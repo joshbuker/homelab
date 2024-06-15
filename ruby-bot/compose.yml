@@ -1,0 +1,57 @@
+services:
+  ruby-bot:
+    image: ghcr.io/joshbuker/discord-bot:main
+    depends_on:
+      - ollama
+      - automatic1111
+    restart: unless-stopped
+    tty: true
+    env_file:
+      - ./.env-ruby
+
+  piclub-bot:
+    image: ghcr.io/btc-raspberrypiclub/piclub-bot:main
+    depends_on:
+      - ollama
+    restart: unless-stopped
+    tty: true
+    env_file:
+      - ./.env-piclub
+    volumes:
+      - ./data-piclub:/bot/data
+
+  automatic1111:
+    image: ghcr.io/joshbuker/automatic1111-docker:main
+    volumes:
+      - ./stable-diffusion/model:/model:ro
+      - venv-persistance:/app/venv
+      - repo-persistance:/app/repositories
+    tty: true
+    ports:
+      - 7860:7860
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  ollama:
+    image: ollama/ollama
+    volumes:
+      - ./ollama:/root/.ollama
+    ports:
+      - 11434:11434
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+# We persist the venv for automatic1111 because it's 5GB that automatically redownloads every boot otherwise
+volumes:
+  venv-persistance: {}
+  repo-persistance: {}
