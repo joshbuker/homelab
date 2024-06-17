@@ -15,7 +15,8 @@ Then, you will need to add at least one checkpoint model to the `model/checkpoin
 Checkpoints can be found on various platforms such as:
 - [HuggingFace](https://huggingface.co/models?pipeline_tag=text-to-image)
 - [CivitAI](https://civitai.com/models)
-- Others?
+- [Replicate](https://replicate.com/collections/text-to-image)
+- [Other Alternatives...](https://alternativeto.net/software/hugging-face/)
 
 For security, ensure that any model checkpoints you download are in the `.safetensors` format. Otherwise, malicious models can run arbitrary code on your computer, which is highly dangerous.
 
