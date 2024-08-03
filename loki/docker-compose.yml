@@ -89,7 +89,7 @@ services:
         constraints:
           - node.labels.deployment.target.loki == true
     ports:
-      - "3000:3000"
+      - ${GRAFANA_PORT:-3000}:3000/tcp
     networks:
       - loki
 
