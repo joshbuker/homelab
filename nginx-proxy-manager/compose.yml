@@ -3,13 +3,32 @@ services:
     image: jc21/nginx-proxy-manager:latest
     restart: unless-stopped
     ports:
-      - '80:80'   # Public HTTP Port
-      - '443:443' # Public HTTPS Port
-      - '81:81'   # Admin Web Port
-    network_mode: host
+      # Public HTTP Port
+      - target: 80
+        published: 80
+        mode: host
+        protocol: tcp
+      # Public HTTPS Port
+      - target: 443
+        published: 443
+        mode: host
+        protocol: tcp
+      # Admin Web Port
+      - target: 81
+        published: 81
+        protocol: tcp
+      # - '80:80'   # Public HTTP Port
+      # - '443:443' # Public HTTPS Port
+      # - '81:81'   # Admin Web Port
     volumes:
       - nginx_data:/data
       - nginx_letsencrypt:/etc/letsencrypt
+    deploy:
+      mode: replicated
+      replicas: 1
+      constraints:
+        # Don't forget to label a node for deployment
+        - node.labels.deployment.target.nginx-proxy-manager == true
 
 volumes:
   nginx_data:
