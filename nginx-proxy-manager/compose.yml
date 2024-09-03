@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   app:
     image: jc21/nginx-proxy-manager:latest
@@ -8,6 +6,7 @@ services:
       - '80:80'   # Public HTTP Port
       - '443:443' # Public HTTPS Port
       - '81:81'   # Admin Web Port
+    network_mode: host
     volumes:
       - nginx_data:/data
       - nginx_letsencrypt:/etc/letsencrypt
