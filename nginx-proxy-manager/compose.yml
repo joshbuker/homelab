@@ -29,9 +29,10 @@ services:
     deploy:
       mode: replicated
       replicas: 1
-      constraints:
-        # Don't forget to label a node for deployment
-        - node.labels.deployment.target.nginx-proxy-manager == true
+      placement:
+        constraints:
+          # Don't forget to label a node for deployment
+          - node.labels.deployment.target.nginx-proxy-manager == true
 
 volumes:
   nginx_data:
