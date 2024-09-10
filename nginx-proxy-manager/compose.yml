@@ -26,6 +26,8 @@ services:
     volumes:
       - nginx_data:/data
       - nginx_letsencrypt:/etc/letsencrypt
+    networks:
+      - nginx_reverse_proxy
     deploy:
       mode: replicated
       replicas: 1
@@ -33,6 +35,10 @@ services:
         constraints:
           # Don't forget to label a node for deployment
           - node.labels.deployment.target.nginx-proxy-manager == true
+
+networks:
+  nginx_reverse_proxy:
+    external: true
 
 volumes:
   nginx_data:
