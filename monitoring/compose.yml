@@ -6,6 +6,7 @@ networks:
 volumes:
   prometheus_storage: {}
   grafana_storage: {}
+  loki_storage: {}
 
 services:
   mikrotik_exporter:
@@ -21,11 +22,10 @@ services:
   grafana:
     container_name: grafana
     environment:
-      GF_AUTH_ANONYMOUS_ENABLED: "true"
-      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
-      GF_AUTH_BASIC_ENABLED: "false"
-      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Viewer"
       GF_USERS_DEFAULT_THEME: "dark"
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
       GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /etc/grafana/provisioning/dashboards/mikrotik/mikrotik_mktxp_exporter.json
     image: grafana/grafana:latest
     networks:
@@ -38,6 +38,11 @@ services:
       -  grafana_storage:/var/lib/grafana
       - ./config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
       - ./config/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+    # deploy:
+    #   replicas: 1
+    #   placement:
+    #     constraints:
+    #       - node.labels.deployment.target.monitoring == true
 
   loki:
     command: -config.file=/etc/loki/loki-config.yml
@@ -49,7 +54,13 @@ services:
       - 3100:3100/tcp
     restart: unless-stopped
     volumes:
+      - loki_storage:/loki
       - ./config/loki/loki-config.yml:/etc/loki/loki-config.yml
+    # deploy:
+    #   replicas: 1
+    #   placement:
+    #     constraints:
+    #       - node.labels.deployment.target.monitoring == true
 
   prometheus:
     command:
@@ -68,6 +79,11 @@ services:
     volumes:
       - prometheus_storage:/prometheus
       - ./config/prometheus/prometheus-config.yml:/etc/prometheus/prometheus-config.yml:ro
+    # deploy:
+    #   replicas: 1
+    #   placement:
+    #     constraints:
+    #       - node.labels.deployment.target.monitoring == true
 
   promtail:
     command: -config.file=/etc/promtail/promtail-config.yml
@@ -80,7 +96,14 @@ services:
       - 9080:9080/tcp
     restart: unless-stopped
     volumes:
-    - ./config/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      - ./config/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
+      # REVIEW: Is /var/log (host logs) captured by node_exporter?
+      # - /var/log:/var/log
+    # deploy:
+    #   replicas: 1
+    #   placement:
+    #     constraints:
+    #       - node.labels.deployment.target.monitoring == true
 
   syslog-ng:
     command: -edv
