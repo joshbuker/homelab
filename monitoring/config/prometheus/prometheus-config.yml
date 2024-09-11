@@ -1,0 +1,54 @@
+# global config
+global:
+  scrape_interval: 45s # Set the scrape interval to every 45 seconds. Default is every 1 minute.
+  scrape_timeout: 30s
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  external_labels:
+    origin_prometheus: mktxp
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+
+scrape_configs:
+
+  - job_name: 'prometheus'
+    honor_timestamps: true
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    metrics_path: /metrics
+    scheme: http
+    static_configs:
+    - targets: ['prometheus:9090']
+
+  - job_name: 'grafana'
+    static_configs:
+    - targets: ['grafana:3000']
+
+  - job_name: 'loki'
+    static_configs:
+    - targets: ['loki:3100']
+
+  - job_name: 'promtail'
+    static_configs:
+    - targets: ['promtail:9080']
+
+  - job_name: 'mktxp'
+    static_configs:
+      - targets: ['mikrotik_exporter:49090']
+
+  # Example job for node_exporter
+  - job_name: 'node_exporter'
+    static_configs:
+      - targets: ['node_exporter:9100']
+
+  # Example job for cadvisor
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
