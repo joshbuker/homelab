@@ -121,35 +121,35 @@ services:
       - MIKROTIK_SYSLOG_IP=${MIKROTIK_SYSLOG_IP:?Please set MIKROTIK_SYSLOG_IP}
     restart: unless-stopped
     volumes:
-    - ./config/syslog-ng/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
+      - ./config/syslog-ng/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
 
-  node_exporter:
-    image: quay.io/prometheus/node-exporter:v1.8.1
-    container_name: node_exporter
-    command: "--path.rootfs=/host"
-    pid: host
-    restart: unless-stopped
-    ports:
-      - 9100:9100/tcp
-    volumes:
-      - /:/host:ro,rslave
-    networks:
-      - monitoring_overlay
+  # node_exporter:
+  #   image: quay.io/prometheus/node-exporter:v1.8.1
+  #   container_name: node_exporter
+  #   command: "--path.rootfs=/host"
+  #   pid: host
+  #   restart: unless-stopped
+  #   ports:
+  #     - 9100:9100/tcp
+  #   volumes:
+  #     - /:/host:ro,rslave
+  #   networks:
+  #     - monitoring_overlay
 
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
-    container_name: cadvisor
-    ports:
-      - 8080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /dev/disk/:/dev/disk:ro
-    devices:
-      - /dev/kmsg
-    privileged: true
-    restart: unless-stopped
-    networks:
-      - monitoring_overlay
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor:v0.49.1
+  #   container_name: cadvisor
+  #   ports:
+  #     - 8080:8080
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:ro
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #     - /dev/disk/:/dev/disk:ro
+  #   devices:
+  #     - /dev/kmsg
+  #   privileged: true
+  #   restart: unless-stopped
+  #   networks:
+  #     - monitoring_overlay
