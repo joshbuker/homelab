@@ -112,7 +112,8 @@ services:
     depends_on:
       - promtail
     image: balabit/syslog-ng:latest
-    network_mode: host # Required to properly read source IP
+    networks:
+      - monitoring_overlay
     ports:
       - 514:514/udp # Accept receiving BSD Syslog Entries
       - 601:601/tcp # Accept receiving IETF Syslog Entries
