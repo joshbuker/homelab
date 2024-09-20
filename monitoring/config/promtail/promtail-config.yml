@@ -10,23 +10,33 @@ clients:
 
 scrape_configs:
 
-# FIXME: Only ingest mikrotik with this, allow ingesting other logs and not mixing into this
-- job_name: syslog
+- job_name: syslog_mikrotik
   syslog:
     listen_address: 0.0.0.0:1514
     idle_timeout: 60s
     label_structured_data: yes
     labels:
-      job: "syslog"
+      job: "syslog_mikrotik"
   relabel_configs:
     - source_labels: ['__syslog_message_hostname']
       target_label: 'routerboard'
     - source_labels: ['__syslog_connection_hostname']
       target_label: 'syslog_host'
-
-#    - source_labels: ['__syslog_connection_ip_address']
-#      target_label: 'syslog_host_ip'
-#    - source_labels: ['__syslog_message_severity']
-#     target_label: 'severity'
-#    - source_labels: ['__syslog_message_facility']
-#      target_label: 'facility'
+- job_name: syslog_other
+  syslog:
+    listen_address: 0.0.0.0:2514
+    idle_timeout: 60s
+    label_structured_data: yes
+    labels:
+      job: "syslog_other"
+  relabel_configs:
+    - source_labels: ['__syslog_message_hostname']
+      target_label: 'syslog_message_host'
+    - source_labels: ['__syslog_connection_hostname']
+      target_label: 'syslog_host'
+    - source_labels: ['__syslog_connection_ip_address']
+      target_label: 'syslog_host_ip'
+    - source_labels: ['__syslog_message_severity']
+      target_label: 'severity'
+    - source_labels: ['__syslog_message_facility']
+      target_label: 'facility'

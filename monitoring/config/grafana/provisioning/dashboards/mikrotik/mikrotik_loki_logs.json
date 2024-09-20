@@ -112,7 +112,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "count_over_time({job=\"syslog\", routerboard=\"$routerboard\"} [$__interval] |~\"(?i)$topics\" |~\"(?i)$searchable_pattern\" !~\"(?i)$exclude\")",
+          "expr": "count_over_time({job=\"syslog_mikrotik\", routerboard=\"$routerboard\"} [$__interval] |~\"(?i)$topics\" |~\"(?i)$searchable_pattern\" !~\"(?i)$exclude\")",
           "legendFormat": "{{host}}",
           "queryType": "range",
           "refId": "A"
@@ -211,7 +211,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "count_over_time({job=\"syslog\", routerboard=\"$routerboard\"} [$__interval] |regexp \"(?P<prefix>\\\\w+)\\\\: \" |~\"(?i)$topics\" |~\"(?i)$searchable_pattern\" !~\"(?i)$exclude\")",
+          "expr": "count_over_time({job=\"syslog_mikrotik\", routerboard=\"$routerboard\"} [$__interval] |regexp \"(?P<prefix>\\\\w+)\\\\: \" |~\"(?i)$topics\" |~\"(?i)$searchable_pattern\" !~\"(?i)$exclude\")",
           "legendFormat": "{{prefix}}",
           "queryType": "range",
           "refId": "A"
@@ -252,7 +252,7 @@
             "uid": "P8E80F9AEF21F6940"
           },
           "editorMode": "code",
-          "expr": "{job=\"syslog\", routerboard=\"$routerboard\"} |~\"(?i)$topics\" |~\"(?i)$searchable_pattern\" !~\"(?i)$exclude\"",
+          "expr": "{job=\"syslog_mikrotik\", routerboard=\"$routerboard\"} |~\"(?i)$topics\" |~\"(?i)$searchable_pattern\" !~\"(?i)$exclude\"",
           "legendFormat": "",
           "queryType": "range",
           "refId": "A"
