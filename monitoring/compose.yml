@@ -115,8 +115,16 @@ services:
     networks:
       - monitoring_overlay
     ports:
-      - 514:514/udp # Accept receiving BSD Syslog Entries
-      - 601:601/tcp # Accept receiving IETF Syslog Entries
+      # Accept receiving BSD Syslog Entries
+      - target: 514
+        published: 514
+        protocol: udp
+        mode: host
+      # Accept receiving IETF Syslog Entries
+      - target: 601
+        published: 601
+        protocol: tcp
+        mode: host
     environment:
       - MIKROTIK_SYSLOG_IP=${MIKROTIK_SYSLOG_IP:?Please set MIKROTIK_SYSLOG_IP}
     restart: unless-stopped
