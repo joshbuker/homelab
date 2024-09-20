@@ -116,6 +116,8 @@ services:
     ports:
       - 514:514/udp # Accept receiving BSD Syslog Entries
       - 601:601/tcp # Accept receiving IETF Syslog Entries
+    environment:
+      - MIKROTIK_SYSLOG_IP=${MIKROTIK_SYSLOG_IP:?Please set MIKROTIK_SYSLOG_IP}
     restart: unless-stopped
     volumes:
       - ./config/syslog-ng/syslog-ng.conf:/etc/syslog-ng/syslog-ng.conf:ro
