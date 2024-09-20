@@ -31,12 +31,12 @@ source s_network {
 
 # Filter for syslog traffic coming from MikroTik(s)
 filter f_mikrotik {
-	netmask("$(getenv MIKROTIK_SYSLOG_IP)/32");
+	netmask("192.168.88.1/32" type("source"));
 };
 
 # Filter for all other syslog network traffic (inverse of above)
 filter f_other {
-	not netmask("$(getenv MIKROTIK_SYSLOG_IP)/32");
+	not netmask("192.168.88.1/32" type("source"));
 };
 
 # Append some special sauce to debug source ip
