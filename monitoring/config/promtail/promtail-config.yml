@@ -20,10 +20,6 @@ scrape_configs:
   relabel_configs:
     - source_labels: ['__syslog_message_hostname']
       target_label: 'routerboard'
-    - source_labels: ['__syslog_connection_hostname']
-      target_label: 'syslog_host'
-    - source_labels: ['__syslog_message_sd_meta_source_ip']
-      target_label: 'source_ip'
 - job_name: syslog_other
   syslog:
     listen_address: 0.0.0.0:2514
@@ -34,13 +30,14 @@ scrape_configs:
   relabel_configs:
     - source_labels: ['__syslog_message_hostname']
       target_label: 'syslog_message_host'
-    - source_labels: ['__syslog_connection_hostname']
-      target_label: 'syslog_host'
-    - source_labels: ['__syslog_connection_ip_address']
-      target_label: 'syslog_host_ip'
     - source_labels: ['__syslog_message_severity']
       target_label: 'severity'
     - source_labels: ['__syslog_message_facility']
       target_label: 'facility'
     - source_labels: ['__syslog_message_sd_meta_source_ip']
       target_label: 'source_ip'
+    # These will always just show the hostname/ip of syslog-ng, which isn't particularly useful
+    # - source_labels: ['__syslog_connection_hostname']
+    #   target_label: 'syslog_host'
+    # - source_labels: ['__syslog_connection_ip_address']
+    #   target_label: 'syslog_host_ip'
