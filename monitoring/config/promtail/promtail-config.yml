@@ -20,6 +20,8 @@ scrape_configs:
   relabel_configs:
     - source_labels: ['__syslog_message_hostname']
       target_label: 'routerboard'
+    - source_labels: ['__syslog_message_sd_meta_source_ip']
+      target_label: 'source_ip'
 - job_name: syslog_other
   syslog:
     listen_address: 0.0.0.0:2514
