@@ -1,15 +1,27 @@
-version: "3.8"
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: ${FRONTEND_OVERLAY_SUBNET:?Please set FRONTEND_OVERLAY_SUBNET}
+  nginx_reverse_proxy:
+    external: true
 
 services:
   jellyfin:
     image: ghcr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
+    networks:
+      frontend:
+        ipv4_address: ${FRONTEND_JELLYFIN_STATIC_IP:?Please set FRONTEND_JELLYFIN_STATIC_IP}
+      nginx_reverse_proxy: null
     environment:
       PUID: 1000
       PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
+      DOCKER_MODS: 'ghcr.io/jumoog/intro-skipper'
     volumes:
-      - ./jellyfin_config:/config
+      - ./config/jellyfin:/config
       - jellyfin_transcode:/media/transcode-cache
       - jellyfin_data:/media
     ports:
@@ -34,7 +46,7 @@ services:
       UMASK: 022
       WEBUI_PORT: ${QBITTORRENT_UI_PORT:-8085}
     volumes:
-      - ./qbittorrent_config:/config
+      - ./config/qbittorrent:/config
       - media_downloads:/downloads
     logging:
       driver: "json-file"
@@ -51,7 +63,7 @@ services:
       PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
-      - ./sabnzbd_config:/config
+      - ./config/sabnzbd:/config
       - media_downloads:/downloads
     logging:
       driver: "json-file"
@@ -63,13 +75,13 @@ services:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
     environment:
-      PUID: 1000
-      PGID: 1000
+      #PUID: 1000
+      #PGID: 1000
       LOG_LEVEL: info
       TZ: '${TZ:-America/Los_Angeles}'
     network_mode: service:gluetun
     volumes:
-      - ./jellyseerr_config:/app/config
+      - ./config/jellyseerr:/app/config
     logging:
       driver: "json-file"
       options:
@@ -104,12 +116,12 @@ services:
       TZ: '${TZ:-America/Los_Angeles}'
       DOCKER_MODS: 'linuxserver/mods:radarr-striptracks'
     volumes:
-      - ./sonarr_config:/config
+      - ./config/sonarr:/config
       - streaming_data:/data
       # - plex_media:/plex
       # - /media/ramcache:/config/temp
-      - ./sonarr_config/extended/custom-services:/custom-services.d
-      - ./sonarr_config/extended/custom-cont-int:/custom-cont-init.d
+      - ./config/sonarr/extended/custom-services:/custom-services.d
+      - ./config/sonarr/extended/custom-cont-int:/custom-cont-init.d
       # ORIGINAL VOLUMES
       # - ~/docker/config/sonarr:/config
       # - /media/library/jellyfin/tv:/tv
@@ -133,12 +145,12 @@ services:
       TZ: '${TZ:-America/Los_Angeles}'
       DOCKER_MODS: 'linuxserver/mods:radarr-striptracks'
     volumes:
-      - ./radarr_config:/config
+      - ./config/radarr:/config
       - streaming_data:/data
       # - plex_media:/plex
       # - /media/ramcache:/config/temp
-      - ./radarr_config/extended/custom-services:/custom-services.d
-      - ./radarr_config/extended/custom-cont-int:/custom-cont-init.d
+      - ./config/radarr/extended/custom-services:/custom-services.d
+      - ./config/radarr/extended/custom-cont-int:/custom-cont-init.d
     logging:
       driver: "json-file"
       options:
@@ -153,7 +165,7 @@ services:
       PGID: 1000
       TZ: '${TZ:-America/Los_Angeles}'
     volumes:
-      - ./prowlarr_config:/config
+      - ./config/prowlarr:/config
     network_mode: service:gluetun
     logging:
       driver: "json-file"
@@ -164,32 +176,73 @@ services:
   gluetun:
     image: qmcgaw/gluetun:latest
     container_name: gluetun
+    networks:
+      frontend:
+        ipv4_address: ${FRONTEND_GLUETUN_STATIC_IP:?Please set FRONTEND_GLUETUN_STATIC_IP}
+      nginx_reverse_proxy: null
     cap_add:
       - NET_ADMIN
     environment:
       PUID: 1000
       PGID: 1000
-      VPN_SERVICE_PROVIDER: ${OPENVPN_PROVIDER:-protonvpn}
-      OPENVPN_USER: ${OPENVPN_USER:?Please set OPENVPN_USER}
-      OPENVPN_PASSWORD: ${OPENVPN_PASSWORD:?Please set OPENVPN_PASSWORD}
+      VPN_SERVICE_PROVIDER: ${VPN_PROVIDER:-protonvpn}
+      VPN_TYPE: ${VPN_TYPE:-wireguard}
+      WIREGUARD_PRIVATE_KEY: ${WIREGUARD_KEY:?Please set WIREGUARD_KEY}
+      SERVER_COUNTRIES: ${VPN_COUNTRY:-United States}
+      SECURE_CORE_ONLY: on
       HTTP_CONTROL_SERVER_ADDRESS: ":8087"
-      BLOCK_SURVEILLANCE: "on"
+      BLOCK_SURVEILLANCE: on
       FIREWALL_OUTBOUND_SUBNETS: ${FIREWALL_OUTBOUND_SUBNETS:?Please set FIREWALL_OUTBOUND_SUBNETS}
       TZ: ${TZ:-America/Los_Angeles}
-      UPDATER_PERIOD: ${OPENVPN_UPDATER_PERIOD:-720h} # Update every 30 days
-      SERVER_HOSTNAMES: ${OPENVPN_HOSTNAMES:-ch-us-01a.protonvpn.net,ch-us-01b.protonvpn.net,ch-us-01c.protonvpn.net,ch-us-01d.protonvpn.net,ch-us-01e.protonvpn.net,ch-us-01f.protonvpn.net,ch-us-01g.protonvpn.net,ch-us-01h.protonvpn.net,ch-us-01i.protonvpn.net,ch-us-01j.protonvpn.net,ch-us-01k.protonvpn.net,ch-us-01n.protonvpn.net,ch-us-01p.protonvpn.net,ch-us-01v.protonvpn.net,ch-us-01w.protonvpn.net,ch-us-01x.protonvpn.net,ch-us-01y.protonvpn.net,ch-us-01z.protonvpn.net,ch-us-02a.protonvpn.net,ch-us-02b.protonvpn.net,ch-us-02c.protonvpn.net,ch-us-02d.protonvpn.net,ch-us-02d.protonvpn.net,ch-us-02e.protonvpn.net,ch-us-02f.protonvpn.net,ch-us-02g.protonvpn.net,ch-us-02h.protonvpn.net,ch-us-02i.protonvpn.net,ch-us-02j.protonvpn.net,ch-us-02k.protonvpn.net}
+      UPDATER_PERIOD: ${VPN_UPDATER_PERIOD:-168h} # Update every week
     volumes:
-      - /tmp:/tmp
+      - tmp_cache:/tmp
     ports:
       - ${GLUETON_API_PORT:-8087}:8087 # Gluetun HTTP API
       - ${SABNZBD_PORT:-8086}:8080 # SABnzbd HTTP Interface
-      - ${QBITTORRENT_UI_PORT:-8085}:8085/tcp # qBittorrent HTTP Interface
+      - ${QBITTORRENT_UI_PORT:-8085}:${QBITTORRENT_UI_PORT:-8085}/tcp # qBittorrent HTTP Interface
       - ${RADARR_PORT:-7878}:7878 # Radarr HTTP Interface and API
       - ${SONARR_PORT:-8989}:8989 # Sonarr HTTP Interface and API
       - ${PROWLARR_PORT:-9696}:9696 # Prowlarr HTTP Interface and API
       - ${FLARESOLVERR_PROXY_PORT:-8191}:8191 # Flaresolverr proxy
       - ${JELLYSEERR_PORT:-5055}:5055 # Jellyseerr HTTP Interface
+      - ${BAZARR_UI_PORT:-6767}:6767 # Bazarr HTTP Interface
+      - ${HOMEARR_UI_PORT:-7575}:7575 # Homearr HTTP Interface
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: '${TZ:-America/Los_Angeles}'
+    volumes:
+      - tmp_cache:/tmp
+      - ./config/bazarr/:/config
+      - jellyfin_data:/library
+    network_mode: service:gluetun
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"   # number of files or file count
+        max-size: "10m" # file size
+    restart: unless-stopped
+  homarr:
+    container_name: homarr
+    image: ghcr.io/ajnart/homarr:latest
+    restart: unless-stopped
+    network_mode: service:gluetun
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
+      - ./config/homarr/configs:/app/data/configs
+      - ./config/homarr/icons:/app/public/icons
+      - ./config/homarr/data:/data
+      - tmp_cache:/tmp
     logging:
       driver: "json-file"
       options:
@@ -202,6 +255,11 @@ volumes:
       type: tmpfs
       o: "nodev,nosuid,noexec,nodiratime,size=32G"
       device: /media/transcode-cache
+  tmp_cache:
+    driver_opts:
+      type: tmpfs
+      o: "nodev,nosuid,noexec,nodiratime,size=32G"
+      device: /media/tmp-cache
   jellyfin_data:
     driver_opts:
       type: "nfs"
