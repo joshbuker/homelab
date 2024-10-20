@@ -18,6 +18,8 @@ services:
     environment:
       TZ: 'America/Los_Angeles'
       WEBPASSWORD: ${PIHOLE_WEB_PASSWORD:?Please set PIHOLE_WEB_PASSWORD}
+      VIRTUAL_HOST: ${PIHOLE_HOST:-pihole.internal}
+      VIRTUAL_PORT: 80
     # Volumes store your data between container upgrades
     volumes:
       - pihole:/etc/pihole
