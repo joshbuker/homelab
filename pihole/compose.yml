@@ -22,13 +22,9 @@ services:
       VIRTUAL_PORT: 80
     # Volumes store your data between container upgrades
     volumes:
-      - pihole:/etc/pihole
-      - dnsmasq:/etc/dnsmasq.d
+      - ./config/pihole:/etc/pihole
+      - ./config/dnsmasq:/etc/dnsmasq.d
     # https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     # cap_add:
     #   - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     restart: unless-stopped
-
-volumes:
-  pihole: {}
-  dnsmasq: {}
