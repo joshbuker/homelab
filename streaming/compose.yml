@@ -79,6 +79,7 @@ services:
       #PGID: 1000
       LOG_LEVEL: info
       TZ: '${TZ:-America/Los_Angeles}'
+      forceIpv4First: true
     network_mode: service:gluetun
     volumes:
       - ./config/jellyseerr:/app/config
