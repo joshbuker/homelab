@@ -12,7 +12,6 @@ docker image prune -f
 #docker volume prune -f
 #docker container prune -f
 
-echo "$(date +"%F %T") Device updated" | sudo tee -a /var/log/auto_update_everything.log
 if [ -f /var/run/reboot-required ]
 then
     echo "$(date +"%F %T") Device updated - Reboot required, restarting in 2 seconds" | sudo tee -a /var/log/auto_update_everything.log
