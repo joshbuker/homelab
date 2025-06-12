@@ -80,7 +80,13 @@ services:
       LOG_LEVEL: info
       TZ: '${TZ:-America/Los_Angeles}'
       forceIpv4First: true
-    network_mode: service:gluetun
+    # network_mode: service:gluetun
+    networks:
+      frontend:
+        ipv4_address: ${FRONTEND_JELLYSEERR_STATIC_IP:?Please set FRONTEND_JELLYSEERR_STATIC_IP}
+      nginx_reverse_proxy: null
+    ports:
+      - ${JELLYSEERR_PORT:-5055}:5055 # Jellyseerr HTTP Interface
     volumes:
       - ./config/jellyseerr:/app/config
     logging:
@@ -206,7 +212,7 @@ services:
       - ${SONARR_PORT:-8989}:8989 # Sonarr HTTP Interface and API
       - ${PROWLARR_PORT:-9696}:9696 # Prowlarr HTTP Interface and API
       - ${FLARESOLVERR_PROXY_PORT:-8191}:8191 # Flaresolverr proxy
-      - ${JELLYSEERR_PORT:-5055}:5055 # Jellyseerr HTTP Interface
+      # - ${JELLYSEERR_PORT:-5055}:5055 # Jellyseerr HTTP Interface
       - ${BAZARR_UI_PORT:-6767}:6767 # Bazarr HTTP Interface
       - ${HOMEARR_UI_PORT:-7575}:7575 # Homearr HTTP Interface
     restart: unless-stopped
