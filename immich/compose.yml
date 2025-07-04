@@ -1,12 +1,15 @@
 networks:
   nginx_reverse_proxy:
     external: true
+  immich_backend:
+    driver: overlay
 
 services:
   immich-server:
     image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
     networks:
       - nginx_reverse_proxy
+      - immich_backend
     container_name: immich_server
     # extends:
     #   file: hwaccel.transcoding.yml
@@ -45,6 +48,8 @@ services:
       - model-cache:/cache
     env_file:
       - .env
+    networks:
+      - immich_backend
     restart: always
     healthcheck:
       disable: false
@@ -57,6 +62,8 @@ services:
   redis:
     container_name: immich_redis
     image: docker.io/valkey/valkey:8-bookworm@sha256:fec42f399876eb6faf9e008570597741c87ff7662a54185593e74b09ce83d177
+    networks:
+      - immich_backend
     healthcheck:
       test: redis-cli ping || exit 1
     restart: always
@@ -71,6 +78,8 @@ services:
       POSTGRES_INITDB_ARGS: '--data-checksums'
       # Uncomment the DB_STORAGE_TYPE: 'HDD' var if your database isn't stored on SSDs
       # DB_STORAGE_TYPE: 'HDD'
+    networks:
+      - immich_backend
     volumes:
       # Do not edit the next line. If you want to change the database storage location on your system, edit the value of DB_DATA_LOCATION in the .env file
       - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
