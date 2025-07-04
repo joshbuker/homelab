@@ -3,6 +3,7 @@ networks:
     external: true
   immich_backend:
     driver: overlay
+    attachable: true
 
 services:
   immich-server:
