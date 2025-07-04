@@ -1,7 +1,13 @@
+networks:
+  nginx_reverse_proxy:
+    external: true
+
 services:
   uptime-kuma:
     image: louislam/uptime-kuma:1
     container_name: uptime-kuma
+    networks:
+      - nginx_reverse_proxy
     volumes:
       - ./uptime-kuma-data:/app/data
     ports:
