@@ -244,6 +244,8 @@ services:
     image: ghcr.io/homarr-labs/homarr:latest
     restart: unless-stopped
     network_mode: service:gluetun
+    environment:
+      SECRET_ENCRYPTION_KEY: ${HOMARR_SECRET_KEY:?Please set HOMARR_SECRET_KEY}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
       - ./config/homarr/appdata:/appdata
