@@ -241,14 +241,16 @@ services:
     restart: unless-stopped
   homarr:
     container_name: homarr
-    image: ghcr.io/ajnart/homarr:latest
+    image: ghcr.io/homarr-labs/homarr:latest
     restart: unless-stopped
     network_mode: service:gluetun
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock # Optional, only if you want docker integration
-      - ./config/homarr/configs:/app/data/configs
-      - ./config/homarr/icons:/app/public/icons
-      - ./config/homarr/data:/data
+      - ./config/homarr/appdata:/appdata
+      # Legacy mounts (remove once homarr v1 confirmed working)
+      # - ./config/homarr/configs:/app/data/configs
+      # - ./config/homarr/icons:/app/public/icons
+      # - ./config/homarr/data:/data
       - tmp_cache:/tmp
     logging:
       driver: "json-file"
