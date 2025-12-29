@@ -35,6 +35,9 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
   qbittorrent:
     image: ghcr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
