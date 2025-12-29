@@ -54,6 +54,9 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: sabnzbd
@@ -71,6 +74,9 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
@@ -95,6 +101,15 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      jellyfin:
+        condition: service_healthy
+      radarr:
+        condition: service_healthy
+      sonarr:
+        condition: service_healthy
   flaresolverr:
     # DockerHub mirror flaresolverr/flaresolverr:latest
     image: ghcr.io/flaresolverr/flaresolverr:latest
@@ -113,6 +128,9 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
   sonarr:
     image: ghcr.io/linuxserver/sonarr:latest
     container_name: sonarr
@@ -142,6 +160,15 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      qbittorrent:
+        condition: service_healthy
+      sabnzbd:
+        condition: service_healthy
+      prowlarr:
+        condition: service_healthy
   radarr:
     image: ghcr.io/linuxserver/radarr:latest
     container_name: radarr
@@ -164,6 +191,15 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      qbittorrent:
+        condition: service_healthy
+      sabnzbd:
+        condition: service_healthy
+      prowlarr:
+        condition: service_healthy
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -180,6 +216,11 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
+      flaresolverr:
+        condition: service_healthy
   gluetun:
     image: qmcgaw/gluetun:latest
     container_name: gluetun
@@ -239,6 +280,9 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    depends_on:
+      gluetun:
+        condition: service_healthy
   homarr:
     container_name: homarr
     image: ghcr.io/homarr-labs/homarr:latest
@@ -259,6 +303,9 @@ services:
       options:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
+    depends_on:
+      gluetun:
+        condition: service_healthy
 
 volumes:
   jellyfin_transcode:
