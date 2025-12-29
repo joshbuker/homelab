@@ -119,8 +119,6 @@ services:
     depends_on:
       gluetun:
         condition: service_healthy
-      jellyfin:
-        condition: service_healthy
       radarr:
         condition: service_healthy
       sonarr:
