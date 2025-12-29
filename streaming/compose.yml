@@ -172,6 +172,12 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${SONARR_PORT:-8989}/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       gluetun:
         condition: service_healthy
@@ -199,6 +205,12 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${RADARR_PORT:-7878}/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
     depends_on:
       gluetun:
         condition: service_healthy
