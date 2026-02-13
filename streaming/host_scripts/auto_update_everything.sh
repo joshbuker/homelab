@@ -8,6 +8,17 @@ sudo apt-get update
 sudo apt-get upgrade -y
 sudo apt-get autoremove -y
 sudo apt-get autoclean
+
+# Update all docker images for all running compose projects
+docker ps \
+  --filter label=com.docker.compose.project \
+  --format '{{.Label "com.docker.compose.project.working_dir"}}' \
+| sort -u \
+| while read dir; do
+    docker compose -f "$dir/compose.yml" pull || \
+    docker compose -f "$dir/docker-compose.yml" pull
+  done
+
 docker image prune -f
 #docker volume prune -f
 #docker container prune -f
