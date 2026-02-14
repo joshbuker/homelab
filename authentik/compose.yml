@@ -1,3 +1,7 @@
+networks:
+  nginx_reverse_proxy:
+    external: true
+
 services:
   postgresql:
     env_file:
@@ -18,7 +22,7 @@ services:
     restart: unless-stopped
     volumes:
     - database:/var/lib/postgresql/data
-  server:
+  authentik:
     command: server
     depends_on:
       postgresql:
@@ -32,6 +36,8 @@ services:
       AUTHENTIK_POSTGRESQL__USER: ${PG_USER:-authentik}
       AUTHENTIK_SECRET_KEY: ${AUTHENTIK_SECRET_KEY:?secret key required}
     image: ${AUTHENTIK_IMAGE:-ghcr.io/goauthentik/server}:${AUTHENTIK_TAG:-2025.12.4}
+    networks:
+      nginx_reverse_proxy: null
     ports:
     - ${COMPOSE_PORT_HTTP:-9000}:9000
     - ${COMPOSE_PORT_HTTPS:-9443}:9443
