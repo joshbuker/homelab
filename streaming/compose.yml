@@ -41,9 +41,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    depends_on:
-      gluetun:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
   qbittorrent:
     image: ghcr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
@@ -69,9 +69,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    depends_on:
-      gluetun:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
     container_name: sabnzbd
@@ -89,9 +89,9 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
-    depends_on:
-      gluetun:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
@@ -116,13 +116,13 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
-    depends_on:
-      gluetun:
-        condition: service_healthy
-      radarr:
-        condition: service_healthy
-      sonarr:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
+    #   radarr:
+    #     condition: service_healthy
+    #   sonarr:
+    #     condition: service_healthy
   flaresolverr:
     # DockerHub mirror flaresolverr/flaresolverr:latest
     image: ghcr.io/flaresolverr/flaresolverr:latest
@@ -147,9 +147,9 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    depends_on:
-      gluetun:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
   sonarr:
     image: ghcr.io/linuxserver/sonarr:latest
     container_name: sonarr
@@ -185,11 +185,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    depends_on:
-      gluetun:
-        condition: service_healthy
-      prowlarr:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
+    #   prowlarr:
+    #     condition: service_healthy
   radarr:
     image: ghcr.io/linuxserver/radarr:latest
     container_name: radarr
@@ -218,11 +218,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    depends_on:
-      gluetun:
-        condition: service_healthy
-      prowlarr:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
+    #   prowlarr:
+    #     condition: service_healthy
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -245,11 +245,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-    depends_on:
-      gluetun:
-        condition: service_healthy
-      flaresolverr:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
+    #   flaresolverr:
+    #     condition: service_healthy
   gluetun:
     image: qmcgaw/gluetun:latest
     container_name: gluetun
@@ -309,9 +309,9 @@ services:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
     restart: unless-stopped
-    depends_on:
-      gluetun:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
   homarr:
     container_name: homarr
     image: ghcr.io/homarr-labs/homarr:latest
@@ -332,9 +332,9 @@ services:
       options:
         max-file: "5"   # number of files or file count
         max-size: "10m" # file size
-    depends_on:
-      gluetun:
-        condition: service_healthy
+    # depends_on:
+    #   gluetun:
+    #     condition: service_healthy
 
 volumes:
   jellyfin_transcode:
