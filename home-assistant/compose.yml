@@ -1,0 +1,22 @@
+networks:
+  nginx_reverse_proxy:
+    external: true
+
+services:
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./config:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus:ro
+    restart: unless-stopped
+    # Security risk, but aids in discovery of devices on the network. Use with caution.
+    # privileged: true
+    # network_mode: host
+    networks:
+      - nginx_reverse_proxy
+    environment:
+      TZ: ${TZ:-America/Los_Angeles}
+      # Disable jemalloc if you have issues on odroid with system page size
+      # DISABLE_JEMALLOC: true
