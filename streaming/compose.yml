@@ -262,7 +262,7 @@ services:
     environment:
       PUID: 1000
       PGID: 1000
-      DOT_PROVIDERS: ${GLUETUN_DOT_PROVIDER:-cloudflare}
+      # DOT_PROVIDERS: ${GLUETUN_DOT_PROVIDER:-cloudflare}
       DNS_ADDRESS: ${GLUETUN_DNS_ADDRESS:-127.0.0.1}
       VPN_SERVICE_PROVIDER: ${VPN_PROVIDER:-protonvpn}
       VPN_TYPE: ${VPN_TYPE:-wireguard}
@@ -279,6 +279,7 @@ services:
       FIREWALL_OUTBOUND_SUBNETS: ${FIREWALL_OUTBOUND_SUBNETS:?Please set FIREWALL_OUTBOUND_SUBNETS}
       TZ: ${TZ:-America/Los_Angeles}
       UPDATER_PERIOD: ${VPN_UPDATER_PERIOD:-168h} # Update every week
+      STARTUP_CHECK_ENABLED: false
     volumes:
       - ./config/gluetun:/gluetun
       - ./config/gluetun/auth:/gluetun/auth
