@@ -20,6 +20,7 @@ services:
       # - ${UPLOAD_LOCATION}:/usr/src/app/upload
       # https://github.com/immich-app/immich/discussions/10249#discussioncomment-9765901
       - immich_library:/usr/src/app/upload
+      - photography:/mnt/media/photography:ro
       - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
@@ -98,3 +99,8 @@ volumes:
       type: "nfs"
       o: "addr=${IMMICH_LIBRARY_NAS_ADDRESS:?Please set IMMICH_LIBRARY_NAS_ADDRESS},rw,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
       device: ":${IMMICH_LIBRARY_NAS_DEVICE:?Please set IMMICH_LIBRARY_NAS_DEVICE}"
+  photography:
+    driver_opts:
+      type: "nfs"
+      o: "addr=${PHOTOGRAPHY_NAS_ADDRESS:?Please set PHOTOGRAPHY_NAS_ADDRESS},ro,noatime,rsize=8192,wsize=8192,tcp,timeo=14,nfsvers=4"
+      device: ":${PHOTOGRAPHY_NAS_DEVICE:?Please set PHOTOGRAPHY_NAS_DEVICE}"
