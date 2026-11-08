@@ -102,7 +102,6 @@ services:
       LOG_LEVEL: info
       TZ: '${TZ:-America/Los_Angeles}'
       forceIpv4First: true
-    # network_mode: service:gluetun
     networks:
       frontend:
         ipv4_address: ${FRONTEND_SEERR_STATIC_IP:?Please set FRONTEND_SEERR_STATIC_IP}
@@ -346,6 +345,15 @@ services:
     # depends_on:
     #   gluetun:
     #     condition: service_healthy
+  recyclarr:
+    container_name: recyclarr
+    image: ghcr.io/recyclarr/recyclarr:8
+    networks:
+      nginx_reverse_proxy: null
+    volumes:
+      - ./config/recyclarr:/config
+    environment:
+      TZ: '${TZ:-America/Los_Angeles}'
 
 volumes:
   jellyfin_transcode:
