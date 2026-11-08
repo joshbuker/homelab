@@ -93,7 +93,8 @@ services:
     #   gluetun:
     #     condition: service_healthy
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: ghcr.io/seerr-team/seerr:latest
+    init: true
     container_name: jellyseerr
     environment:
       #PUID: 1000
